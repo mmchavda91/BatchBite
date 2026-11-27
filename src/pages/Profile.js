@@ -1,10 +1,18 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { updateProfile } from '../services/api';
 import { toast } from 'react-toastify';
-import { getErrorMessage, formatDate } from '../utils/helpers';
+import { getErrorMessage } from '../utils/helpers';
 import Footer from '../components/Footer';
-import { FiUser, FiMail, FiPhone, FiMapPin, FiPackage, FiLogOut, FiCheck } from 'react-icons/fi';
+import {
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiPackage,
+  FiLogOut,
+  FiCheck
+} from 'react-icons/fi';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Profile = () => {
@@ -14,21 +22,30 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
-    address: typeof user?.address === 'string' ? user?.address : user?.address?.street || '',
+    address:
+      typeof user?.address === 'string'
+        ? user.address
+        : user?.address?.street || '',
   });
 
   const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => {
-    setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
+    setFormData((p) => ({
+      ...p,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     setSaving(true);
+
     try {
       const res = await updateProfile(formData);
-      const updated = res.data.data?.user || res.data.user || res.data;
+      const updated =
+        res.data.data?.user || res.data.user || res.data;
+
       setUser(updated);
       toast.success('Profile details updated successfully! 🍱');
     } catch (err) {
@@ -45,16 +62,26 @@ const Profile = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <div className="page-header">
         <div className="container">
           <h1>My Customer Profile</h1>
-          <p>Manage your delivery details, contact number, and food pre-order history</p>
+          <p>
+            Manage your delivery details, contact number, and food
+            pre-order history
+          </p>
         </div>
       </div>
 
       <div className="container mb-5 flex-grow-1">
         <div className="row g-4 justify-content-center">
+
           {/* Profile Card Left */}
           <div className="col-lg-4">
             <div className="card-custom p-4 text-center mb-4">
@@ -76,10 +103,16 @@ const Profile = () => {
                 👤
               </div>
 
-              <h4 className="fw-bold mb-1" style={{ color: 'var(--secondary)' }}>
+              <h4
+                className="fw-bold mb-1"
+                style={{ color: 'var(--secondary)' }}
+              >
                 {user?.name}
               </h4>
-              <p className="text-muted small mb-3">{user?.email}</p>
+
+              <p className="text-muted small mb-3">
+                {user?.email}
+              </p>
 
               <span className="badge rounded-pill bg-success mb-3 px-3 py-2">
                 Active Customer Account
@@ -87,22 +120,33 @@ const Profile = () => {
 
               <div className="d-flex flex-column gap-2 text-start mt-3 pt-3 border-top small">
                 <div className="d-flex align-items-center gap-2 text-muted">
-                  <FiMail /> <span>{user?.email}</span>
+                  <FiMail />
+                  <span>{user?.email}</span>
                 </div>
+
                 <div className="d-flex align-items-center gap-2 text-muted">
-                  <FiPhone /> <span>{user?.phone || 'No phone set'}</span>
+                  <FiPhone />
+                  <span>{user?.phone || 'No phone set'}</span>
                 </div>
+
                 <div className="d-flex align-items-center gap-2 text-muted">
-                  <FiMapPin /> <span>{formData.address || 'No address set'}</span>
+                  <FiMapPin />
+                  <span>
+                    {formData.address || 'No address set'}
+                  </span>
                 </div>
               </div>
 
               <hr className="my-4" />
 
               <div className="d-grid gap-2">
-                <Link to="/my-orders" className="btn btn-outline-primary d-inline-flex align-items-center justify-content-center gap-2 py-2">
+                <Link
+                  to="/my-orders"
+                  className="btn btn-outline-primary d-inline-flex align-items-center justify-content-center gap-2 py-2"
+                >
                   <FiPackage /> View Order History
                 </Link>
+
                 <button
                   onClick={handleLogout}
                   className="btn btn-outline-danger d-inline-flex align-items-center justify-content-center gap-2 py-2"
@@ -116,14 +160,21 @@ const Profile = () => {
           {/* Edit Details Right */}
           <div className="col-lg-7">
             <div className="card-custom p-4 p-md-5">
-              <h5 className="fw-bold mb-4" style={{ color: 'var(--secondary)' }}>
+              <h5
+                className="fw-bold mb-4"
+                style={{ color: 'var(--secondary)' }}
+              >
                 Edit Personal Information
               </h5>
 
               <form onSubmit={handleUpdate}>
                 <div className="row g-3">
+
                   <div className="col-12">
-                    <label className="form-label-custom">Full Name</label>
+                    <label className="form-label-custom">
+                      Full Name
+                    </label>
+
                     <input
                       type="text"
                       name="name"
@@ -135,18 +186,27 @@ const Profile = () => {
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label-custom">Email Address</label>
+                    <label className="form-label-custom">
+                      Email Address
+                    </label>
+
                     <input
                       type="email"
                       className="form-control form-control-custom bg-light"
                       value={user?.email || ''}
                       disabled
                     />
-                    <small className="text-muted">Email cannot be changed.</small>
+
+                    <small className="text-muted">
+                      Email cannot be changed.
+                    </small>
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label-custom">Phone Number</label>
+                    <label className="form-label-custom">
+                      Phone Number
+                    </label>
+
                     <input
                       type="tel"
                       name="phone"
@@ -158,7 +218,10 @@ const Profile = () => {
                   </div>
 
                   <div className="col-12">
-                    <label className="form-label-custom">Default Delivery / Pickup Notes</label>
+                    <label className="form-label-custom">
+                      Default Delivery / Pickup Notes
+                    </label>
+
                     <textarea
                       name="address"
                       rows={3}
@@ -176,13 +239,18 @@ const Profile = () => {
                       disabled={saving}
                       style={{ padding: '12px 30px' }}
                     >
-                      <FiCheck /> {saving ? 'Saving Changes...' : 'Save Profile Changes'}
+                      <FiCheck />
+                      {saving
+                        ? 'Saving Changes...'
+                        : 'Save Profile Changes'}
                     </button>
                   </div>
+
                 </div>
               </form>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -192,4 +260,4 @@ const Profile = () => {
 };
 
 export default Profile;
-
+ 
