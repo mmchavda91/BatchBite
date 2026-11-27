@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getProduct, updateProduct, uploadProductImage } from '../../services/api';
 import { FOOD_CATEGORIES, getImageUrl, getErrorMessage } from '../../utils/helpers';
@@ -26,12 +26,9 @@ const EditProduct = () => {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     setLoading(true);
+
     try {
       const res = await getProduct(id);
       const prod = res.data.data?.product || res.data.product || res.data;
@@ -55,7 +52,11 @@ const EditProduct = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
 
   const validate = () => {
     const errs = {};

@@ -59,11 +59,18 @@ const CATEGORY_IMAGES = {
   'default': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=80',
 };
 
+// Get backend origin URL (handles Render deployment vs local development)
+const getBackendBaseUrl = () => {
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  return apiUrl.replace(/\/api\/?$/, '');
+};
+
 // Get image URL (handles local upload path, external URL, or category fallback)
 export const getImageUrl = (filename, category = '') => {
   if (filename) {
     if (filename.startsWith('http://') || filename.startsWith('https://')) return filename;
-    return `http://localhost:5000${filename.startsWith('/') ? '' : '/'}${filename}`;
+    const base = getBackendBaseUrl();
+    return `${base}${filename.startsWith('/') ? '' : '/'}${filename}`;
   }
   return CATEGORY_IMAGES[category] || CATEGORY_IMAGES['default'];
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getBatch, updateBatch } from '../../services/api';
 import { getErrorMessage } from '../../utils/helpers';
@@ -26,22 +26,24 @@ const EditBatch = () => {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    fetchBatch();
-  }, [id]);
-
-  const fetchBatch = async () => {
+  const fetchBatch = useCallback(async () => {
     setLoading(true);
+
     try {
       const res = await getBatch(id);
       const b = res.data.data?.batch || res.data.batch || res.data;
 
       setProductName(b.product?.name || 'Dish');
 
-      // format prep date for date input (YYYY-MM-DD)
-      const prepDate = b.preparationDate ? new Date(b.preparationDate).toISOString().split('T')[0] : '';
-      // format deadline for datetime-local (YYYY-MM-DDTHH:MM)
-      const deadline = b.orderDeadline ? new Date(b.orderDeadline).toISOString().slice(0, 16) : '';
+      // Format preparation date
+      const prepDate = b.preparationDate
+        ? new Date(b.preparationDate).toISOString().split('T')[0]
+        : '';
+
+      // Format order deadline
+      const deadline = b.orderDeadline
+        ? new Date(b.orderDeadline).toISOString().slice(0, 16)
+        : '';
 
       setFormData({
         batchName: b.batchName || '',
@@ -60,7 +62,11 @@ const EditBatch = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchBatch();
+  }, [fetchBatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getBatches } from '../services/api';
 import BatchCard from '../components/BatchCard';
@@ -17,22 +17,23 @@ const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [sortBy, setSortBy] = useState('newest');
 
-  useEffect(() => {
-    fetchBatches();
-  }, [selectedCategory]);
-
-  const fetchBatches = async () => {
+  const fetchBatches = useCallback(async () => {
     setLoading(true);
+
     try {
       const params = { status: 'active' };
+
       if (selectedCategory !== 'All') {
         params.category = selectedCategory;
       }
+
       const res = await getBatches(params);
+
       const list =
         res.data.data?.batches ||
         res.data.batches ||
         (Array.isArray(res.data) ? res.data : []);
+
       setBatches(Array.isArray(list) ? list : []);
     } catch (err) {
       console.error('Failed to fetch batches:', err);
@@ -40,8 +41,11 @@ const Products = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory]);
 
+  useEffect(() => {
+    fetchBatches();
+  }, [fetchBatches]);
   // Filter by search query (product name, batch name, description, cuisine)
   const filteredBatches = batches.filter((b) => {
     const pName = b.product?.name?.toLowerCase() || '';

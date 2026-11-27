@@ -19,7 +19,7 @@ connectDB();
 
 const app = express();
 
-// CORS - allow frontend
+// CORS - allow frontend (local, Vercel, and custom domains)
 const allowedOrigins = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
@@ -27,14 +27,18 @@ const allowedOrigins = [
   'http://127.0.0.1:5000',
 ];
 
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL);
+}
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin (like mobile apps, curl, Postman)
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (mobile apps, Postman, server-to-server)
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
         return callback(null, true);
       }
-      return callback(null, true); // Permissive in dev
+      return callback(null, true); // Permissive fallback
     },
     credentials: true,
   })

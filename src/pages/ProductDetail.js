@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getBatch } from '../services/api';
 import { useCart } from '../contexts/CartContext';
@@ -25,15 +25,13 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
 
-  useEffect(() => {
-    fetchBatchDetail();
-  }, [id]);
-
-  const fetchBatchDetail = async () => {
+  const fetchBatchDetail = useCallback(async () => {
     setLoading(true);
+
     try {
       const res = await getBatch(id);
       const data = res.data.data?.batch || res.data.batch || res.data;
+
       setBatch(data);
     } catch (err) {
       toast.error('Unable to load batch details');
@@ -41,8 +39,11 @@ const ProductDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
 
+  useEffect(() => {
+    fetchBatchDetail();
+  }, [fetchBatchDetail]);
   if (loading) return <LoadingSpinner fullPage text="Loading delicious details..." />;
   if (!batch) return null;
 
